@@ -1,0 +1,43 @@
+import requests
+import json
+from terminaltables import AsciiTable
+import datetime
+current_date = datetime.datetime.today().strftime('%Y-%m-%d')
+
+towns = [
+    []
+]
+
+user_choice = input('Podaj nazwę miasta do sprawdzenia pogody >>> :').title()
+towns.append(user_choice)
+tables = [
+    ["Miasto","Data pomiaru","Godzina pomiaru","Temperatura","Ciśnienie"]
+            ]
+
+def main():
+    
+    url = 'https://danepubliczne.imgw.pl/api/data/synop'
+    response = requests.get(url)
+
+    for data in json.loads(response.text):
+        if data['stacja'] in towns:
+            tables.append([
+                data['stacja'],
+                data['data_pomiaru'],
+                data['godzina_pomiaru'],
+                data['temperatura'],
+                data['cisnienie']
+                ])
+
+    table = AsciiTable(tables)
+    print(table.table)
+    input('Press any key to quit >>>')
+            
+   
+
+
+if __name__ == '__main__':
+    print('Program pogodowy 2022\n'\
+        'Dziś jest' ,datetime.datetime.today().strftime('%d-%m-%Y'))
+    main()
+    
